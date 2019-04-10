@@ -1,0 +1,27 @@
+{
+  "name": "gulp_builder",
+  "version": "1.0.0",
+  "description": "Gulp Builder - Frontend development tool",
+  "author": "Skymen",
+  "license": "ISC",
+  "dependencies": {
+    "browser-sync": "latest",
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "latest",
+    "gulp-cli": "latest",
+    "gulp-concat": "latest",
+    "gulp-imagemin": "latest",
+    "gulp-plumber": "latest",
+    "gulp-sass": "latest",
+    "gulp-exec": "latest",
+    "gulp-size": "latest",
+    "gulp-sourcemaps": "latest",
+    "gulp-svg-sprite": "latest",
+    "gulp-uglify": "latest",
+    "gulp-watch": "latest",
+    "gulp.spritesmith": "latest",
+    "merge-stream": "latest",
+    "vinyl-buffer": "latest",
+    "yargs": "latest"
+  }
+}
