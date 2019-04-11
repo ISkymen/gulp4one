@@ -11,6 +11,20 @@ let gulp = require('gulp'),
     bs = require("browser-sync").create(),
     argv = require('yargs').argv;
 
+// Get config file
+function getConfig(done) {
+    try {
+        let config = require('./config.js');
+        if (typeof config !== 'undefined') {
+            console.log('\x1b[36m%s\x1b[0m', 'Config file is ok');
+            return config;
+            done();
+        }
+    }
+    catch (e) {
+        console.log('\x1b[41m', 'Wrong or missing config\'s file. Please, check that the file `config.js` exists in the gulp folder and has right format.', '\x1b[0m');
+    }
+}
 
 let config = getConfig();
 let path = config.path;
@@ -50,14 +64,19 @@ function js() {
     return process;
 }
 
+// Clear drupal cache
 function clearcache(done) {
-    exec('lando drush cr', function (err, stdout, stderr) {
+    let lando = "";
+    if (config.site_name.includes("lndo.site")) {
+        lando = 'lando ';
+    }
+    exec(lando + 'drush cr', function (err, stdout, stderr) {
         console.log('\x1b[36m%s\x1b[0m', stderr.trim());
         done(err);
     });
 }
 
-// BrowserSync
+// BrowserSync init
 function browserSync(done) {
     bs.init({
         proxy: config.site_name,
@@ -70,7 +89,7 @@ function browserSync(done) {
     done();
 }
 
-// BrowserSync
+// BrowserSync reload
 function reloadBrowserSync(done) {
     bs.reload();
     done();
@@ -80,32 +99,16 @@ function reloadBrowserSync(done) {
 function watchFiles() {
     watcher([path.styles.scss], gulp.series('css'));
     watcher([path.js.src], gulp.series('js'));
-    watcher([path.template], gulp.series('clearcache', 'reloadBrowserSync'));
+    watcher([path.template], gulp.series('cr', 'reload'));
 }
 
 const build = gulp.series(gulp.parallel(css, js), clearcache);
 const watch = gulp.series(gulp.parallel(css, js), gulp.parallel(watchFiles, browserSync));
 
-function getConfig(done) {
-    try {
-        console.log('tetetwt');
-        let config = require('./config.js');
-        if (typeof config !== 'undefined') {
-            console.log('\x1b[36m%s\x1b[0m', 'Config file is ok');
-            return config;
-            done();
-        }
-    }
-    catch (e) {
-        console.log('\x1b[41m', 'Wrong or missing config\'s file. Please, check that the file `config.js` exists in the gulp folder and has right format.', '\x1b[0m');
-    }
-
-}
-
 exports.css = css;
 exports.js = js;
-exports.clearcache = clearcache;
-exports.reloadBrowserSync = reloadBrowserSync;
+exports.cr = clearcache;
+exports.reload = reloadBrowserSync;
 exports.build = build;
 exports.watch = watch;
 exports.default = watch;
